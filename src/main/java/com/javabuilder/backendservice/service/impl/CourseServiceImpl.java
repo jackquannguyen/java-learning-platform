@@ -36,4 +36,16 @@ public class CourseServiceImpl implements CourseService {
     public void deleteById(Long id) {
         courseRepository.deleteById(id);
     }
+
+    @Override
+    public Course updateCourseById(Long id, Course newCourse) {
+        Course currentCourse = courseRepository.findById(id).orElse(null);
+        currentCourse.setName(newCourse.getName());
+        currentCourse.setDescription(newCourse.getDescription());
+        currentCourse.setPrice(newCourse.getPrice());
+        currentCourse.setThumbnail(newCourse.getThumbnail());
+        currentCourse.setUpdatedAt(Instant.now());
+        courseRepository.save(currentCourse);
+        return currentCourse;
+    }
 }
