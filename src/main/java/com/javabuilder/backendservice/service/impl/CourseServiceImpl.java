@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.service.impl;
 
+import com.javabuilder.backendservice.dto.CourseSummary;
 import com.javabuilder.backendservice.entity.Course;
 import com.javabuilder.backendservice.repository.CourseRepository;
 import com.javabuilder.backendservice.service.CourseService;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +41,9 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course updateCourseById(Long id, Course newCourse) {
-        Course currentCourse = courseRepository.findById(id).orElse(null);
+        Course currentCourse = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
         currentCourse.setName(newCourse.getName());
         currentCourse.setDescription(newCourse.getDescription());
         currentCourse.setPrice(newCourse.getPrice());
@@ -48,4 +52,20 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(currentCourse);
         return currentCourse;
     }
+
+    @Override
+    public List<Course> searchCourse(String name) {
+        List<CourseSummary> courseSummaries = courseRepository.findByNameContaining(name);
+        return courseSummaries.stream()
+                .map(courseSummary -> {
+                    Course course = new Course();
+                    course.setName(courseSummary.getName());
+                    course.setDescription(courseSummary.getDescription());
+                    course.setPrice(courseSummary.getPrice());
+                    course.setThumbnail(courseSummary.getThumbnail());
+                    return course;
+                })
+                .toList();
+    }
+
 }

@@ -34,9 +34,14 @@ public class CourseController {
         courseService.deleteById(id);
     }
 
-    // Viết API update khóa học và tìm hiểu về Query Method, Custom Query, Projection trong Spring Data JPA
     @PutMapping("/{id}")
     public Course updateCourse(@PathVariable Long id, @RequestBody Course newCourse) {
         return courseService.updateCourseById(id, newCourse);
     }
+
+    @GetMapping("/search")
+    public List<Course> searchCourse(@RequestParam String name) {
+        return courseService.searchCourse(name);
+    }
+
 }
