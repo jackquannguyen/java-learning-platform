@@ -40,8 +40,9 @@ public class CourseController {
     }
 
     @GetMapping("/search")
-    public List<Course> searchCourse(@RequestParam String name) {
-        return courseService.searchCourse(name);
+    public List<Course> searchCourse(@RequestParam String keyword) {
+        return courseService.searchCourse(keyword);
     }
+
 
 }

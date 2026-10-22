@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +53,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Course> searchCourse(String name) {
-        List<CourseSummary> courseSummaries = courseRepository.findByNameContaining(name);
+    public List<Course> searchCourse(String keyword) {
+        List<CourseSummary> courseSummaries = courseRepository.findByNameOrDescription(keyword);
         return courseSummaries.stream()
                 .map(courseSummary -> {
                     Course course = new Course();
@@ -67,5 +66,4 @@ public class CourseServiceImpl implements CourseService {
                 })
                 .toList();
     }
-
 }
