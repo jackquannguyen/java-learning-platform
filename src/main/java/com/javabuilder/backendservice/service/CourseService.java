@@ -15,5 +15,5 @@ public interface CourseService {
 
     Course updateCourseById(Long id, Course newCourse);
 
-    List<Course> searchCourse(String name);
+    List<Course> searchCourse(String keyword);
 }
