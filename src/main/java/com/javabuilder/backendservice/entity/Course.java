@@ -5,7 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.spi.ToolProvider;
+import java.util.Set;
 
 @Entity
 @Table(name = "courses")
@@ -34,4 +34,6 @@ public class Course {
     private Instant createdAt;
     private Instant updatedAt;
 
+    @OneToMany(mappedBy = "course")
+    private Set<Chapter> chapters;
 }
