@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.spi.ToolProvider;
 
 @Entity
 @Table(name = "courses")
@@ -32,4 +33,5 @@ public class Course {
     private String thumbnail;
     private Instant createdAt;
     private Instant updatedAt;
+
 }

@@ -4,7 +4,6 @@ import com.javabuilder.backendservice.dto.request.CreateCourseRequest;
 import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
 import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
-import com.javabuilder.backendservice.entity.Course;
 import com.javabuilder.backendservice.service.CourseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
