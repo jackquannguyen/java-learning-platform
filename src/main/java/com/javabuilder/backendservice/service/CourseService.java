@@ -1,19 +1,23 @@
 package com.javabuilder.backendservice.service;
 
+import com.javabuilder.backendservice.dto.request.CreateCourseRequest;
+import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
+import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
+import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
 import com.javabuilder.backendservice.entity.Course;
 import java.util.List;
 
 public interface CourseService {
 
-    Course createCourse(Course course);
+    CreateCourseResponse createCourse(CreateCourseRequest request);
 
-    Course findById(Long id);
+    CourseDetailResponse findById(Long id);
 
-    List<Course> getCourses();
+    List<CourseDetailResponse> getCourses();
 
     void deleteById(Long id);
 
-    Course updateCourseById(Long id, Course newCourse);
+    CourseDetailResponse updateCourseById(Long id, UpdateCourseRequest request);
 
-    List<Course> searchCourse(String keyword);
+    List<CourseDetailResponse> searchCourse(String keyword);
 }

@@ -1,6 +1,10 @@
 package com.javabuilder.backendservice.service.impl;
 
-import com.javabuilder.backendservice.dto.CourseSummary;
+import com.javabuilder.backendservice.dto.request.CreateCourseRequest;
+import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
+import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
+import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
+import com.javabuilder.backendservice.repository.projection.CourseSummary;
 import com.javabuilder.backendservice.entity.Course;
 import com.javabuilder.backendservice.repository.CourseRepository;
 import com.javabuilder.backendservice.service.CourseService;
@@ -17,20 +21,57 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
 
     @Override
-    public Course createCourse(Course course) {
-        course.setCreatedAt(Instant.now());
-        return courseRepository.save(course);
+    public CreateCourseResponse createCourse(CreateCourseRequest request) {
+        // 1. Convert request to entity
+        Course course = Course.builder()
+                .name(request.getName())
+                .description(request.getDescription())
+                .price(request.getPrice())
+                .thumbnail(request.getThumbnail())
+                .build();
+
+        // 2. Save course to database
+        courseRepository.save(course);
+
+        // 3 Convert entity to response
+        return CreateCourseResponse.builder()
+                .id(course.getId())
+                .name(course.getName())
+                .description(course.getDescription())
+                .price(course.getPrice())
+                .thumbnail(course.getThumbnail())
+                .createdAt(course.getCreatedAt())
+                .build();
     }
 
     @Override
-    public Course findById(Long id) {
+    public CourseDetailResponse findById(Long id) {
         return courseRepository.findById(id)
-                .orElse(null);
+                .map(course -> CourseDetailResponse.builder()
+                        .id(course.getId())
+                        .name(course.getName())
+                        .description(course.getDescription())
+                        .price(course.getPrice())
+                        .thumbnail(course.getThumbnail())
+                        .createdAt(course.getCreatedAt())
+                        .updatedAt(course.getUpdatedAt())
+                        .build())
+                .orElseThrow(() -> new RuntimeException("Course not found"));
     }
 
     @Override
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
+    public List<CourseDetailResponse> getCourses() {
+        return courseRepository.findAll().stream()
+                .map(course -> CourseDetailResponse.builder()
+                        .id(course.getId())
+                        .name(course.getName())
+                        .description(course.getDescription())
+                        .price(course.getPrice())
+                        .thumbnail(course.getThumbnail())
+                        .createdAt(course.getCreatedAt())
+                        .updatedAt(course.getUpdatedAt())
+                        .build())
+                .toList();
     }
 
     @Override
@@ -39,31 +80,51 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourseById(Long id, Course newCourse) {
-        Course currentCourse = courseRepository.findById(id)
+    public CourseDetailResponse updateCourseById(Long id, UpdateCourseRequest request) {
+        Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        currentCourse.setName(newCourse.getName());
-        currentCourse.setDescription(newCourse.getDescription());
-        currentCourse.setPrice(newCourse.getPrice());
-        currentCourse.setThumbnail(newCourse.getThumbnail());
-        currentCourse.setUpdatedAt(Instant.now());
-        courseRepository.save(currentCourse);
-        return currentCourse;
+        if(request.getName() != null) {
+            course.setName(request.getName());
+        }
+
+        if(request.getDescription() != null) {
+            course.setDescription(request.getDescription());
+        }
+
+        if(request.getPrice() != null) {
+            course.setPrice(request.getPrice());
+        }
+
+        if(request.getThumbnail() != null) {
+            course.setThumbnail(request.getThumbnail());
+        }
+        course.setUpdatedAt(Instant.now());
+        courseRepository.save(course);
+
+        return CourseDetailResponse.builder()
+                .id(course.getId())
+                .name(course.getName())
+                .description(course.getDescription())
+                .price(course.getPrice())
+                .thumbnail(course.getThumbnail())
+                .createdAt(course.getCreatedAt())
+                .updatedAt(course.getUpdatedAt())
+                .build();
     }
 
     @Override
-    public List<Course> searchCourse(String keyword) {
+    public List<CourseDetailResponse> searchCourse(String keyword) {
         List<CourseSummary> courseSummaries = courseRepository.findByNameOrDescription(keyword);
         return courseSummaries.stream()
-                .map(courseSummary -> {
-                    Course course = new Course();
-                    course.setName(courseSummary.getName());
-                    course.setDescription(courseSummary.getDescription());
-                    course.setPrice(courseSummary.getPrice());
-                    course.setThumbnail(courseSummary.getThumbnail());
-                    return course;
-                })
+                .map(courseSummary -> CourseDetailResponse.builder()
+                        .name(courseSummary.getName())
+                        .description(courseSummary.getDescription())
+                        .price(courseSummary.getPrice())
+                        .thumbnail(courseSummary.getThumbnail())
+                        .createdAt(courseSummary.getCreatedAt())
+                        .updatedAt(courseSummary.getUpdatedAt())
+                        .build())
                 .toList();
     }
 }
