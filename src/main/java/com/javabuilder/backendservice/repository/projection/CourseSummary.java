@@ -1,4 +1,4 @@
-package com.javabuilder.backendservice.dto;
+package com.javabuilder.backendservice.repository.projection;
 
 import java.math.BigDecimal;
 

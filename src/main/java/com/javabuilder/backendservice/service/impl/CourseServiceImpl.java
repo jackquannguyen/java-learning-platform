@@ -1,6 +1,10 @@
 package com.javabuilder.backendservice.service.impl;
 
-import com.javabuilder.backendservice.dto.CourseSummary;
+import com.javabuilder.backendservice.dto.request.CreateCourseRequest;
+import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
+import com.javabuilder.backendservice.dto.response.CourseResponse;
+import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
+import com.javabuilder.backendservice.repository.projection.CourseSummary;
 import com.javabuilder.backendservice.entity.Course;
 import com.javabuilder.backendservice.repository.CourseRepository;
 import com.javabuilder.backendservice.service.CourseService;
@@ -17,20 +21,37 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
 
     @Override
-    public Course createCourse(Course course) {
-        course.setCreatedAt(Instant.now());
-        return courseRepository.save(course);
+    public CreateCourseResponse createCourse(CreateCourseRequest request) {
+        Course course = Course.builder()
+                        .name(request.getName())
+                        .description(request.getDescription())
+                                .price(request.getPrice())
+                                        .thumbnail(request.getThumbnail())
+                .createdAt(Instant.now())
+                                                .build();
+         courseRepository.save(course);
+
+         return CreateCourseResponse.builder().id(course.getId()).name(course.getName()).description(course.getDescription()).price(course.getPrice()).thumbnail(course.getThumbnail()).createdAt(course.getCreatedAt()).build();
     }
 
     @Override
-    public Course findById(Long id) {
-        return courseRepository.findById(id)
-                .orElse(null);
+    public CourseResponse findById(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("No Course found!"));
+        return CourseResponse.builder()
+                .id(course.getId())
+                .name(course.getName())
+                .description(course.getDescription())
+                .price(course.getPrice())
+                .thumbnail(course.getThumbnail())
+                .build();
     }
 
     @Override
-    public List<Course> getCourses() {
-        return courseRepository.findAll();
+    public List<CourseResponse> getCourses() {
+        return courseRepository.findAll().stream().map(
+                course -> CourseResponse.builder().id(course.getId()).name(course.getName()).description(course.getDescription()).price(course.getPrice()).thumbnail(course.getThumbnail()).createdAt(course.getCreatedAt()).build()
+        ).toList();
     }
 
     @Override
@@ -39,31 +60,44 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Course updateCourseById(Long id, Course newCourse) {
+    public CourseResponse updateCourseById(Long id, UpdateCourseRequest updateRequest) {
         Course currentCourse = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        currentCourse.setName(newCourse.getName());
-        currentCourse.setDescription(newCourse.getDescription());
-        currentCourse.setPrice(newCourse.getPrice());
-        currentCourse.setThumbnail(newCourse.getThumbnail());
-        currentCourse.setUpdatedAt(Instant.now());
-        courseRepository.save(currentCourse);
-        return currentCourse;
+        CourseResponse response = CourseResponse.builder()
+                .id(currentCourse.getId())
+                .name(updateRequest.getName())
+                .description(updateRequest.getDescription())
+                .price(updateRequest.getPrice())
+                .thumbnail(updateRequest.getThumbnail())
+                .createdAt(currentCourse.getCreatedAt())
+                .updatedAt(Instant.now())
+                .build();
+
+        courseRepository.save(
+                currentCourse.builder()
+                        .name(response.getName())
+                        .description(response.getDescription())
+                        .price(response.getPrice())
+                        .thumbnail(response.getThumbnail())
+                        .updatedAt(response.getUpdatedAt())
+                        .build()
+        );
+
+        return response;
     }
 
     @Override
-    public List<Course> searchCourse(String keyword) {
+    public List<CourseResponse> searchCourse(String keyword) {
         List<CourseSummary> courseSummaries = courseRepository.findByNameOrDescription(keyword);
         return courseSummaries.stream()
-                .map(courseSummary -> {
-                    Course course = new Course();
-                    course.setName(courseSummary.getName());
-                    course.setDescription(courseSummary.getDescription());
-                    course.setPrice(courseSummary.getPrice());
-                    course.setThumbnail(courseSummary.getThumbnail());
-                    return course;
-                })
+                .map(courseSummary -> CourseResponse.builder()
+                        .name(courseSummary.getName())
+                        .description(courseSummary.getDescription())
+                        .price(courseSummary.getPrice())
+                        .thumbnail(courseSummary.getThumbnail())
+                        .build()
+                )
                 .toList();
     }
 }

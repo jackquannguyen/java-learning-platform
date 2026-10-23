@@ -1,6 +1,6 @@
 package com.javabuilder.backendservice.repository;
 
-import com.javabuilder.backendservice.dto.CourseSummary;
+import com.javabuilder.backendservice.repository.projection.CourseSummary;
 import com.javabuilder.backendservice.entity.Course;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
