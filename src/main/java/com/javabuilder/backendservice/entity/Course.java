@@ -1,13 +1,11 @@
 package com.javabuilder.backendservice.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.spi.ToolProvider;
 
 @Entity
 @Table(name = "courses")
@@ -15,6 +13,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Course {
 
     @Id
@@ -34,4 +33,5 @@ public class Course {
     private String thumbnail;
     private Instant createdAt;
     private Instant updatedAt;
+
 }
