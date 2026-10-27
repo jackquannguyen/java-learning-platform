@@ -1,10 +1,15 @@
 package com.javabuilder.backendservice.controller;
 
 import com.javabuilder.backendservice.dto.request.CreateChapterRequest;
+import com.javabuilder.backendservice.dto.request.UpdateChapterRequest;
+import com.javabuilder.backendservice.dto.response.ChapterDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateChapterResponse;
+import com.javabuilder.backendservice.entity.Chapter;
 import com.javabuilder.backendservice.service.ChapterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,4 +31,24 @@ public class ChapterController {
     5. Tìm hiểu về ApiResponse chuẩn trong Restful API -> Cách chuẩn hóa API trong hệ thống Restful API
     6. Tìm hiểu về cách tích hợp Swagger vào ứng dụng Spring Boot
      */
+
+    @GetMapping("/{courseId}")
+    public List<ChapterDetailResponse> getAllChapter(@PathVariable Long courseId) {
+        return chapterService.getAllChapterDetails(courseId);
+    }
+
+    @GetMapping("/{courseId}/{chapterId}")
+    public ChapterDetailResponse getChapter(@PathVariable Long courseId,  @PathVariable Long chapterId) {
+        return chapterService.getChapterById(courseId, chapterId);
+    }
+
+    @DeleteMapping("/{courseId}/{chapterId}")
+    public void deleteChapter(@PathVariable Long courseId, @PathVariable Long chapterId){
+        chapterService.deleteChapterById(courseId, chapterId);
+    }
+
+    @PutMapping("/{courseId}/{chapterId}")
+    public ChapterDetailResponse updateChapter(@PathVariable Long courseId, @PathVariable Long chapterId, @RequestBody UpdateChapterRequest request) {
+        return chapterService.updateChapterById(courseId, chapterId, request);
+    }
 }
