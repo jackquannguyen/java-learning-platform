@@ -67,8 +67,8 @@ public class ChapterServiceImpl implements ChapterService {
     }
 
     @Override
-    public ChapterDetailResponse getChapterById(Long courseId, Long chapterId) {
-        Chapter chapter = chapterRepository.findByIdAndCourseId(chapterId, courseId);
+    public ChapterDetailResponse getChapterById(Long chapterId) {
+        Chapter chapter = chapterRepository.findChapterById(chapterId);
 
         return ChapterDetailResponse.builder()
                 .id(chapter.getId())
@@ -81,16 +81,16 @@ public class ChapterServiceImpl implements ChapterService {
         }
 
     @Override
-    public void deleteChapterById(Long courseId, Long chapterId) {
-         boolean res = chapterRepository.deleteByIdAndCourseId(courseId, chapterId);
+    public void deleteChapterById(Long chapterId) {
+         boolean res = chapterRepository.deleteChapterById(chapterId);
          if (!res) {
              throw new IllegalArgumentException("Chapter not found");
          }
     }
 
     @Override
-    public ChapterDetailResponse updateChapterById(Long courseId, Long chapterId, UpdateChapterRequest request) {
-        Chapter chapter = chapterRepository.findByIdAndCourseId(chapterId, courseId);
+    public ChapterDetailResponse updateChapterById(Long chapterId, UpdateChapterRequest request) {
+        Chapter chapter = chapterRepository.findChapterById(chapterId);
         if (chapter == null) {
             throw new IllegalArgumentException("Chapter not found");
         }

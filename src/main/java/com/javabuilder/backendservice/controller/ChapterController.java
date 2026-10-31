@@ -38,17 +38,17 @@ public class ChapterController {
     }
 
     @GetMapping("/{courseId}/{chapterId}")
-    public ChapterDetailResponse getChapter(@PathVariable Long courseId,  @PathVariable Long chapterId) {
-        return chapterService.getChapterById(courseId, chapterId);
+    public ChapterDetailResponse getChapter(@PathVariable Long chapterId) {
+        return chapterService.getChapterById(chapterId);
     }
 
     @DeleteMapping("/{courseId}/{chapterId}")
-    public void deleteChapter(@PathVariable Long courseId, @PathVariable Long chapterId){
-        chapterService.deleteChapterById(courseId, chapterId);
+    public void deleteChapter(@PathVariable Long chapterId){
+        chapterService.deleteChapterById(chapterId);
     }
 
     @PutMapping("/{courseId}/{chapterId}")
-    public ChapterDetailResponse updateChapter(@PathVariable Long courseId, @PathVariable Long chapterId, @RequestBody UpdateChapterRequest request) {
-        return chapterService.updateChapterById(courseId, chapterId, request);
+    public ChapterDetailResponse updateChapter(@PathVariable Long chapterId, @RequestBody UpdateChapterRequest request) {
+        return chapterService.updateChapterById(chapterId, request);
     }
 }

@@ -12,7 +12,9 @@ public interface ChapterService {
 
     CreateChapterResponse createChapter(Long courseId, CreateChapterRequest request);
     List<ChapterDetailResponse> getAllChapterDetails(Long courseId);
-    ChapterDetailResponse getChapterById(Long courseId, Long chapterId);
-    void deleteChapterById(Long courseId, Long chapterId);
-    ChapterDetailResponse updateChapterById(Long courseId, Long chapterId, UpdateChapterRequest request);
+    ChapterDetailResponse getChapterById(Long chapterId);
+    void deleteChapterById(Long chapterId);
+    ChapterDetailResponse updateChapterById(
+            Long chapterId,
+            UpdateChapterRequest request);
 }
