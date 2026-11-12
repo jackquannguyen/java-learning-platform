@@ -90,6 +90,7 @@ public class CourseServiceImpl implements CourseService {
                         .thumbnail(courseSummary.getThumbnail())
                         .createdAt(courseSummary.getCreatedAt())
                         .updatedAt(courseSummary.getUpdatedAt())
+                        .courseLevel(courseSummary.getCourseLevel())
                         .build())
                 .toList();
     }

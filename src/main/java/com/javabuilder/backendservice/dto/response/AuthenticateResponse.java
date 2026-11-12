@@ -8,7 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AuthenticateResponse {
-    private Long id;
-    private String email;
-    private String displayName;
+    private String token;
 }

@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.dto.request;
 
+import com.javabuilder.backendservice.common.CourseLevel;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
@@ -11,4 +12,5 @@ public class UpdateCourseRequest {
     private String description;
     private BigDecimal price;
     private String thumbnail;
+    private CourseLevel courseLevel;
 }

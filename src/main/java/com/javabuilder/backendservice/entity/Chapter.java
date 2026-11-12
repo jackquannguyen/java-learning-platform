@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Entity
 @Table(name = "chapters")
@@ -32,4 +33,7 @@ public class Chapter {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    @OneToMany(mappedBy = "chapter")
+    private Set<Lesson> lessons;
 }

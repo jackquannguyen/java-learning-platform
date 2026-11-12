@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.dto.request;
 
+import com.javabuilder.backendservice.common.CourseLevel;
 import lombok.Getter;
 
 import java.math.BigDecimal;
@@ -10,4 +11,5 @@ public class CreateCourseRequest {
     private String description;
     private BigDecimal price;
     private String thumbnail;
+    private CourseLevel courseLevel;
 }

@@ -14,6 +14,7 @@ public class CourseMapper {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .thumbnail(request.getThumbnail())
+                .courseLevel(request.getCourseLevel())
                 .build();
     }
 
@@ -25,6 +26,7 @@ public class CourseMapper {
                 .price(course.getPrice())
                 .thumbnail(course.getThumbnail())
                 .createdAt(course.getCreatedAt())
+                .courseLevel(course.getCourseLevel())
                 .build();
     }
 
@@ -37,6 +39,7 @@ public class CourseMapper {
                 .thumbnail(course.getThumbnail())
                 .createdAt(course.getCreatedAt())
                 .updatedAt(course.getUpdatedAt())
+                .courseLevel(course.getCourseLevel())
                 .build();
     }
 }

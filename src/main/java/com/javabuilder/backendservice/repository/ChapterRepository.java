@@ -1,6 +1,7 @@
 package com.javabuilder.backendservice.repository;
 
 import com.javabuilder.backendservice.entity.Chapter;
+import com.javabuilder.backendservice.entity.Lesson;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,4 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
     @Transactional
     @Query("delete from Chapter ch where ch.id = :chapterId")
     boolean deleteChapterById(Long chapterId);
-
 }

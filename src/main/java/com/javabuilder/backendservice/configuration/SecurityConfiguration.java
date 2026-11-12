@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private static final String[] WHITELIST = {
-            "/auth/register", "/swagger-ui/**", "/auth/login"
+            "/auth/register", "/swagger-ui/**", "/auth/login", "/api/courses/**", "/api/chapters/**", "/api/lessons/**"
     };
 
     @Bean

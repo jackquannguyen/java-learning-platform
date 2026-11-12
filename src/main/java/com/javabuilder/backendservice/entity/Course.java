@@ -1,5 +1,7 @@
 package com.javabuilder.backendservice.entity;
 
+import com.javabuilder.backendservice.common.CourseLevel;
+import com.javabuilder.backendservice.common.CourseStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +33,8 @@ public class Course {
 
     @Column(nullable = false)
     private String thumbnail;
+    private CourseLevel courseLevel;
+    private CourseStatus courseStatus;
     private Instant createdAt;
     private Instant updatedAt;
 

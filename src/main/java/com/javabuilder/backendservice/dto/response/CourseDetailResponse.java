@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.dto.response;
 
+import com.javabuilder.backendservice.common.CourseLevel;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -18,4 +19,5 @@ public class CourseDetailResponse {
     private String thumbnail;
     private Instant createdAt;
     private Instant updatedAt;
+    private CourseLevel courseLevel;
 }
