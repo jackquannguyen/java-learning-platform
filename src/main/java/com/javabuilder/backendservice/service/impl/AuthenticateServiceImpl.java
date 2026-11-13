@@ -27,13 +27,14 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     private final JwtService jwtService;
 
     @Override
-    public AuthenticateResponse authenticate(AuthenticateRequest request) {
+    public AuthenticateResponse authenticate(AuthenticateRequest request) throws JOSEException {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authentication);
         User user = (User) authenticate.getPrincipal();
 
         return AuthenticateResponse.builder()
-                .token(jwtService.generateToken(user.getId(), Set.of()))
+                .accessToken(jwtService.generateAccessToken(user.getId(), Set.of()))
+                .refreshToken(jwtService.generateRefreshToken(user.getId(), Set.of()))
                 .build();
     }
 }

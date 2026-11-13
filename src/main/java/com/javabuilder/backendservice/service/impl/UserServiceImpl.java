@@ -3,6 +3,7 @@ package com.javabuilder.backendservice.service.impl;
 import com.javabuilder.backendservice.common.UserStatus;
 import com.javabuilder.backendservice.dto.request.RegisterUserRequest;
 import com.javabuilder.backendservice.dto.response.RegisterUserResponse;
+import com.javabuilder.backendservice.dto.response.UserProfileInfo;
 import com.javabuilder.backendservice.entity.Role;
 import com.javabuilder.backendservice.entity.User;
 import com.javabuilder.backendservice.entity.UserHasRole;
@@ -10,6 +11,8 @@ import com.javabuilder.backendservice.repository.RoleRepository;
 import com.javabuilder.backendservice.repository.UserRepository;
 import com.javabuilder.backendservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,6 +63,25 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public UserProfileInfo getUserProfileInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new IllegalStateException("User not authenticated");
+        }
+
+        Long userId = Long.valueOf(authentication.getName());
+        User user =  userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("User not found!"));
+        return UserProfileInfo.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .displayName(user.getDisplayName())
+                .avatarUrl(user.getAvatarUrl())
+                .dateOfBirth(user.getDateOfBirth())
+                .createdAt(user.getCreatedAt())
+                .userStatus(user.getUserStatus())
+                .build();
+    }
 }
 
 

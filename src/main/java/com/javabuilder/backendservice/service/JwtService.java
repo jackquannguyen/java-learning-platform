@@ -4,10 +4,10 @@ import com.javabuilder.backendservice.entity.Role;
 import com.javabuilder.backendservice.entity.User;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.KeyLengthException;
-import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 public interface JwtService {
-    String generateToken(Long userId, Set<Role> role);
+    String generateAccessToken(Long userId, Set<Role> role) throws JOSEException;
+    String generateRefreshToken(Long userId, Set<Role> role) throws JOSEException;
 }

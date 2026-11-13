@@ -5,5 +5,5 @@ import com.javabuilder.backendservice.dto.response.AuthenticateResponse;
 import com.nimbusds.jose.JOSEException;
 
 public interface AuthenticateService {
-    AuthenticateResponse authenticate(AuthenticateRequest request);
+    AuthenticateResponse authenticate(AuthenticateRequest request) throws JOSEException;
 }

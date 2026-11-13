@@ -6,6 +6,7 @@ import com.javabuilder.backendservice.dto.response.AuthenticateResponse;
 import com.javabuilder.backendservice.dto.response.RegisterUserResponse;
 import com.javabuilder.backendservice.service.AuthenticateService;
 import com.javabuilder.backendservice.service.UserService;
+import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class AuthenticateController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public AuthenticateResponse authenticate(@RequestBody @Valid AuthenticateRequest request) {
+    public AuthenticateResponse authenticate(@RequestBody @Valid AuthenticateRequest request) throws JOSEException {
         return authenticateService.authenticate(request);
     }
 

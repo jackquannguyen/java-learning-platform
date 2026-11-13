@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,11 +12,25 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+import java.nio.charset.StandardCharsets;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
     private static final String[] WHITELIST = {
             "/auth/register", "/swagger-ui/**", "/auth/login", "/api/courses/**", "/api/chapters/**", "/api/lessons/**"
     };
@@ -26,7 +41,17 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(WHITELIST).permitAll()
                         .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer((oauth2) -> oauth2
+                        .jwt(withDefaults())
                 ).build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        byte[] keyBytes = this.secretKey.getBytes();
+        SecretKey secret = new SecretKeySpec(keyBytes, "HmacSHA256");
+        return NimbusJwtDecoder.withSecretKey(secret).build();
     }
 
     @Bean
