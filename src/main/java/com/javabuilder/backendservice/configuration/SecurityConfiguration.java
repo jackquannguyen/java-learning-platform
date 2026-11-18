@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.configuration;
 
+import com.javabuilder.backendservice.security.TokenValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +13,9 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.SecretKey;
@@ -51,7 +52,15 @@ public class SecurityConfiguration {
     public JwtDecoder jwtDecoder() {
         byte[] keyBytes = this.secretKey.getBytes();
         SecretKey secret = new SecretKeySpec(keyBytes, "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secret).build();
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withSecretKey(secret).build();
+        OAuth2TokenValidator<Jwt> defaultValidator = JwtValidators.createDefault();
+        OAuth2TokenValidator<Jwt> combinedValidator =
+                new DelegatingOAuth2TokenValidator<>(
+                        defaultValidator,
+                        new TokenValidator()
+                );
+        jwtDecoder.setJwtValidator(combinedValidator);
+        return jwtDecoder;
     }
 
     @Bean
