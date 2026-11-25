@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.service.impl;
 
+import com.javabuilder.backendservice.common.RoleName;
 import com.javabuilder.backendservice.common.UserStatus;
 import com.javabuilder.backendservice.dto.request.RegisterUserRequest;
 import com.javabuilder.backendservice.dto.response.RegisterUserResponse;
@@ -11,6 +12,7 @@ import com.javabuilder.backendservice.repository.RoleRepository;
 import com.javabuilder.backendservice.repository.UserRepository;
 import com.javabuilder.backendservice.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,8 @@ public class UserServiceImpl implements UserService {
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        User user = User.builder()
+        User user = User
+                .builder()
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .displayName(request.getDisplayName())
@@ -43,36 +47,52 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         //Add Default "USER" Role
-        Role role = roleRepository.findByName("ROLE_USER").orElseThrow(() -> new IllegalStateException("Role not found!"));
-        UserHasRole userHasRoles = UserHasRole.builder()
+        Role role = roleRepository
+                .findByName(RoleName.USER)
+                .orElseThrow(() -> new IllegalStateException("Role not found!"));
+        UserHasRole userHasRoles = UserHasRole
+                .builder()
                 .user(user)
                 .role(role)
                 .build();
-        user.getUserHasRoles().add(userHasRoles);
+        user
+                .getUserHasRoles()
+                .add(userHasRoles);
 
         userRepository.save(user);
 
-        return RegisterUserResponse.builder()
+        return RegisterUserResponse
+                .builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .displayName(user.getDisplayName())
                 .createdAt(user.getCreatedAt())
-                .role(user.getUserHasRoles().stream()
-                        .map(userHasRole -> userHasRole.getRole().getName())
+                .role(user
+                        .getUserHasRoles()
+                        .stream()
+                        .map(userHasRole -> userHasRole
+                                .getRole()
+                                .getName()
+                                .name())
                         .collect(Collectors.toSet()))
                 .build();
     }
 
     @Override
     public UserProfileInfo getUserProfileInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
         if (authentication == null) {
             throw new IllegalStateException("User not authenticated");
         }
 
         Long userId = Long.valueOf(authentication.getName());
-        User user =  userRepository.findById(userId).orElseThrow(() -> new IllegalStateException("User not found!"));
-        return UserProfileInfo.builder()
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found!"));
+        return UserProfileInfo
+                .builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .displayName(user.getDisplayName())
@@ -81,6 +101,25 @@ public class UserServiceImpl implements UserService {
                 .createdAt(user.getCreatedAt())
                 .userStatus(user.getUserStatus())
                 .build();
+    }
+
+    @Override
+    public List<UserProfileInfo> getAllUsers() {
+        List<User> userList = userRepository.findAll();
+        return userList
+                .stream()
+                .map(user -> UserProfileInfo
+                        .builder()
+                        .id(user.getId())
+                        .email(user.getEmail())
+                        .displayName(user.getDisplayName())
+                        .avatarUrl(user.getAvatarUrl())
+                        .dateOfBirth(user.getDateOfBirth())
+                        .createdAt(user.getCreatedAt())
+                        .userStatus(user.getUserStatus())
+                        .build()
+                )
+                .toList();
     }
 }
 

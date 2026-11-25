@@ -1,7 +1,6 @@
 package com.javabuilder.backendservice.service.impl;
 
-import com.javabuilder.backendservice.entity.Role;
-import com.javabuilder.backendservice.entity.User;
+import com.javabuilder.backendservice.common.TokenStatus;
 import com.javabuilder.backendservice.service.JwtService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -10,9 +9,9 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.text.ParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
@@ -26,18 +25,21 @@ public class JwtServiceImpl implements JwtService {
     private String secretKey;
 
     @Override
-    public String generateAccessToken(Long userId, Set<Role> role){
+    public String generateAccessToken(Long userId, Set<String> roles) {
         // 1. Header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         // 2. Payload
         Date issueTimeVar = new Date();
-        Date expirationTimeVar = Date.from(issueTimeVar.toInstant().plus(30, ChronoUnit.MINUTES));
+        Date expirationTimeVar = Date.from(issueTimeVar
+                .toInstant()
+                .plus(30, ChronoUnit.MINUTES));
         JWTClaimsSet payload = new JWTClaimsSet.Builder()
                 .subject(String.valueOf(userId))
                 .issueTime(issueTimeVar)
                 .expirationTime(expirationTimeVar)
-                .claim("typ", "access")
+                .claim("typ", TokenStatus.ACCESS_TOKEN)
+                .claim("role", roles)
                 .build();
 
         // 3. Signature
@@ -54,18 +56,20 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public String generateRefreshToken(Long userId, Set<Role> role) throws JOSEException {
+    public String generateRefreshToken(Long userId) throws JOSEException {
         // 1. Header
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
 
         // 2. Payload
         Date issueTimeVar = new Date();
-        Date expirationTimeVar = Date.from(issueTimeVar.toInstant().plus(30, ChronoUnit.DAYS));
+        Date expirationTimeVar = Date.from(issueTimeVar
+                .toInstant()
+                .plus(30, ChronoUnit.DAYS));
         JWTClaimsSet payload = new JWTClaimsSet.Builder()
                 .subject(String.valueOf(userId))
                 .issueTime(issueTimeVar)
                 .expirationTime(expirationTimeVar)
-                .claim("typ", "refresh")
+                .claim("typ", TokenStatus.REFRESH_TOKEN)
                 .build();
 
         // 3. Signature

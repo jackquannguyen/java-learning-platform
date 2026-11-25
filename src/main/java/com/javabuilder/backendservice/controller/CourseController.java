@@ -6,6 +6,7 @@ import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
 import com.javabuilder.backendservice.service.CourseService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CourseController {
 
     private final CourseService courseService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public CreateCourseResponse createCourse(@RequestBody CreateCourseRequest request) {
         return courseService.createCourse(request);
@@ -32,11 +34,13 @@ public class CourseController {
         return courseService.getCourses();
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         courseService.deleteById(id);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     public CourseDetailResponse updateCourse(@PathVariable Long id, @RequestBody UpdateCourseRequest request) {
         return courseService.updateCourseById(id, request);

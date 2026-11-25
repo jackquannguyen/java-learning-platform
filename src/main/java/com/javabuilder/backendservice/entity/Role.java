@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.entity;
 
+import com.javabuilder.backendservice.common.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,12 +20,13 @@ public class Role {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleName name;
 
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(mappedBy = "role",  fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "role", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @Builder.Default
     private Set<UserHasRole> userHasRoles = new HashSet<>(); //new HashSet<> keeps userHasRoles not null
 }
