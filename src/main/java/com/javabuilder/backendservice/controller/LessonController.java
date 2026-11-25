@@ -6,6 +6,7 @@ import com.javabuilder.backendservice.dto.response.CreateLessonResponse;
 import com.javabuilder.backendservice.dto.response.LessonDetailResponse;
 import com.javabuilder.backendservice.service.LessonService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.*;
@@ -18,6 +19,7 @@ public class LessonController {
 
     private final LessonService lessonService;
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{chapterId}")
     public CreateLessonResponse createLesson(
             @PathVariable Long chapterId,
@@ -25,22 +27,24 @@ public class LessonController {
         return lessonService.createLesson(chapterId, request);
     }
 
-    @GetMapping("/{chapterId}")
+    @GetMapping("/chapter/{chapterId}")
     public List<LessonDetailResponse> getAllLessons(@PathVariable Long chapterId) {
         return lessonService.getAllLessonDetails(chapterId);
     }
 
-    @GetMapping("/{chapterId}/{lessonId}")
+    @GetMapping("/{lessonId}")
     public LessonDetailResponse getLesson(@PathVariable Long lessonId) {
         return lessonService.getLessonById(lessonId);
     }
 
-    @DeleteMapping("/{chapterId}/{lessonId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/{lessonId}")
     public void deleteLesson(@PathVariable Long lessonId) {
         lessonService.deleteLessonById(lessonId);
     }
 
-    @PutMapping("/{chapterId}/{lessonId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{lessonId}")
     public LessonDetailResponse updateLesson(
             @PathVariable Long lessonId,
             @RequestBody UpdateLessonRequest request) {
