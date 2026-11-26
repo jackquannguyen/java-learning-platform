@@ -2,6 +2,7 @@ package com.javabuilder.backendservice.controller;
 
 import com.javabuilder.backendservice.dto.request.CreateLessonRequest;
 import com.javabuilder.backendservice.dto.request.UpdateLessonRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.CreateLessonResponse;
 import com.javabuilder.backendservice.dto.response.LessonDetailResponse;
 import com.javabuilder.backendservice.service.LessonService;
@@ -21,19 +22,19 @@ public class LessonController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{chapterId}")
-    public CreateLessonResponse createLesson(
+    public ApiResponse<CreateLessonResponse> createLesson(
             @PathVariable Long chapterId,
             @RequestBody CreateLessonRequest request) {
         return lessonService.createLesson(chapterId, request);
     }
 
     @GetMapping("/chapter/{chapterId}")
-    public List<LessonDetailResponse> getAllLessons(@PathVariable Long chapterId) {
+    public ApiResponse<List<LessonDetailResponse>> getAllLessons(@PathVariable Long chapterId) {
         return lessonService.getAllLessonDetails(chapterId);
     }
 
     @GetMapping("/{lessonId}")
-    public LessonDetailResponse getLesson(@PathVariable Long lessonId) {
+    public ApiResponse<LessonDetailResponse> getLesson(@PathVariable Long lessonId) {
         return lessonService.getLessonById(lessonId);
     }
 
@@ -45,7 +46,7 @@ public class LessonController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{lessonId}")
-    public LessonDetailResponse updateLesson(
+    public ApiResponse<LessonDetailResponse> updateLesson(
             @PathVariable Long lessonId,
             @RequestBody UpdateLessonRequest request) {
         return lessonService.updateLessonById(lessonId, request);

@@ -2,6 +2,7 @@ package com.javabuilder.backendservice.controller;
 
 import com.javabuilder.backendservice.dto.request.CreateCourseRequest;
 import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
 import com.javabuilder.backendservice.service.CourseService;
@@ -20,17 +21,17 @@ public class CourseController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public CreateCourseResponse createCourse(@RequestBody CreateCourseRequest request) {
+    public ApiResponse<CreateCourseResponse> createCourse(@RequestBody CreateCourseRequest request) {
         return courseService.createCourse(request);
     }
 
     @GetMapping("/{id}")
-    public CourseDetailResponse findById(@PathVariable Long id) {
+    public ApiResponse<CourseDetailResponse> findById(@PathVariable Long id) {
         return courseService.findById(id);
     }
 
     @GetMapping
-    public List<CourseDetailResponse> getCourses() {
+    public ApiResponse<List<CourseDetailResponse>> getCourses() {
         return courseService.getCourses();
     }
 
@@ -42,12 +43,13 @@ public class CourseController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
-    public CourseDetailResponse updateCourse(@PathVariable Long id, @RequestBody UpdateCourseRequest request) {
+    public ApiResponse<CourseDetailResponse> updateCourse(@PathVariable Long id,
+                                                          @RequestBody UpdateCourseRequest request) {
         return courseService.updateCourseById(id, request);
     }
 
     @GetMapping("/search")
-    public List<CourseDetailResponse> searchCourse(@RequestParam String keyword) {
+    public ApiResponse<List<CourseDetailResponse>> searchCourse(@RequestParam String keyword) {
         return courseService.searchCourse(keyword);
     }
 }

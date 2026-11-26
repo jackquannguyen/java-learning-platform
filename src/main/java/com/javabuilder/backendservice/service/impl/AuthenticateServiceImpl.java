@@ -1,6 +1,7 @@
 package com.javabuilder.backendservice.service.impl;
 
 import com.javabuilder.backendservice.dto.request.AuthenticateRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.AuthenticateResponse;
 import com.javabuilder.backendservice.entity.Role;
 import com.javabuilder.backendservice.entity.User;
@@ -31,7 +32,7 @@ public class AuthenticateServiceImpl implements AuthenticateService {
     private final JwtService jwtService;
 
     @Override
-    public AuthenticateResponse authenticate(AuthenticateRequest request) throws JOSEException {
+    public ApiResponse<AuthenticateResponse> authenticate(AuthenticateRequest request) throws JOSEException {
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(request.getEmail(),
                 request.getPassword());
         Authentication authenticate = authenticationManager.authenticate(authentication);
@@ -44,10 +45,11 @@ public class AuthenticateServiceImpl implements AuthenticateService {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toSet());
 
-        return AuthenticateResponse
+        return new ApiResponse<>("success", "Login success", AuthenticateResponse
                 .builder()
                 .accessToken(jwtService.generateAccessToken(user.getId(), roles))
                 .refreshToken(jwtService.generateRefreshToken(user.getId()))
-                .build();
+                .roles(roles)
+                .build());
     }
 }

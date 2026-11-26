@@ -3,6 +3,7 @@ package com.javabuilder.backendservice.service.impl;
 import com.javabuilder.backendservice.common.RoleName;
 import com.javabuilder.backendservice.common.UserStatus;
 import com.javabuilder.backendservice.dto.request.RegisterUserRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.RegisterUserResponse;
 import com.javabuilder.backendservice.dto.response.UserProfileInfo;
 import com.javabuilder.backendservice.entity.Role;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public RegisterUserResponse registerUser(RegisterUserRequest request) {
+    public ApiResponse<RegisterUserResponse> registerUser(RegisterUserRequest request) {
         boolean emailExist = userRepository.existsByEmail(request.getEmail());
         if (emailExist) {
             throw new IllegalArgumentException("Email already exists");
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
 
-        return RegisterUserResponse
+        return new ApiResponse<>("success", "Register success", RegisterUserResponse
                 .builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -75,11 +76,11 @@ public class UserServiceImpl implements UserService {
                                 .getName()
                                 .name())
                         .collect(Collectors.toSet()))
-                .build();
+                .build());
     }
 
     @Override
-    public UserProfileInfo getUserProfileInfo() {
+    public ApiResponse<UserProfileInfo> getUserProfileInfo() {
         Authentication authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User not found!"));
-        return UserProfileInfo
+        return new ApiResponse<>("success", "Get user information success", UserProfileInfo
                 .builder()
                 .id(user.getId())
                 .email(user.getEmail())
@@ -100,13 +101,13 @@ public class UserServiceImpl implements UserService {
                 .dateOfBirth(user.getDateOfBirth())
                 .createdAt(user.getCreatedAt())
                 .userStatus(user.getUserStatus())
-                .build();
+                .build());
     }
 
     @Override
-    public List<UserProfileInfo> getAllUsers() {
+    public ApiResponse<List<UserProfileInfo>> getAllUsers() {
         List<User> userList = userRepository.findAll();
-        return userList
+        return new ApiResponse<>("success", "Get All Users success", userList
                 .stream()
                 .map(user -> UserProfileInfo
                         .builder()
@@ -119,7 +120,7 @@ public class UserServiceImpl implements UserService {
                         .userStatus(user.getUserStatus())
                         .build()
                 )
-                .toList();
+                .toList());
     }
 }
 
