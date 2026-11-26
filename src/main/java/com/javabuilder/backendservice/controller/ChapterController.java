@@ -2,6 +2,7 @@ package com.javabuilder.backendservice.controller;
 
 import com.javabuilder.backendservice.dto.request.CreateChapterRequest;
 import com.javabuilder.backendservice.dto.request.UpdateChapterRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.ChapterDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateChapterResponse;
 import com.javabuilder.backendservice.entity.Chapter;
@@ -21,17 +22,18 @@ public class ChapterController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{courseId}")
-    public CreateChapterResponse createChapter(@PathVariable Long courseId, @RequestBody CreateChapterRequest request) {
+    public ApiResponse<CreateChapterResponse> createChapter(@PathVariable Long courseId,
+                                                            @RequestBody CreateChapterRequest request) {
         return chapterService.createChapter(courseId, request);
     }
 
     @GetMapping("/course/{courseId}")
-    public List<ChapterDetailResponse> getAllChapter(@PathVariable Long courseId) {
+    public ApiResponse<List<ChapterDetailResponse>> getAllChapter(@PathVariable Long courseId) {
         return chapterService.getAllChapterDetails(courseId);
     }
 
     @GetMapping("/{chapterId}")
-    public ChapterDetailResponse getChapter(@PathVariable Long chapterId) {
+    public ApiResponse<ChapterDetailResponse> getChapter(@PathVariable Long chapterId) {
         return chapterService.getChapterById(chapterId);
     }
 
@@ -43,8 +45,8 @@ public class ChapterController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{chapterId}")
-    public ChapterDetailResponse updateChapter(@PathVariable Long chapterId,
-                                               @RequestBody UpdateChapterRequest request) {
+    public ApiResponse<ChapterDetailResponse> updateChapter(@PathVariable Long chapterId,
+                                                            @RequestBody UpdateChapterRequest request) {
         return chapterService.updateChapterById(chapterId, request);
     }
 }

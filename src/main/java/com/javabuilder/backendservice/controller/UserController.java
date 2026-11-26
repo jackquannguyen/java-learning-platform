@@ -1,5 +1,6 @@
 package com.javabuilder.backendservice.controller;
 
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.UserProfileInfo;
 import com.javabuilder.backendservice.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/myInfo")
-    public UserProfileInfo getUserInfo() {
+    public ApiResponse<UserProfileInfo> getUserInfo() {
         return userService.getUserProfileInfo();
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
-    public List<UserProfileInfo> getAllUsers() {
+    public ApiResponse<List<UserProfileInfo>> getAllUsers() {
         return userService.getAllUsers();
     }
 }

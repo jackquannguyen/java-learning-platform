@@ -2,6 +2,7 @@ package com.javabuilder.backendservice.service.impl;
 
 import com.javabuilder.backendservice.dto.request.CreateChapterRequest;
 import com.javabuilder.backendservice.dto.request.UpdateChapterRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.ChapterDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateChapterResponse;
 import com.javabuilder.backendservice.entity.Chapter;
@@ -25,8 +26,9 @@ public class ChapterServiceImpl implements ChapterService {
     private final ChapterMapper chapterMapper;
 
     @Override
-    public CreateChapterResponse createChapter(Long courseId, CreateChapterRequest request) {
-        Course course = courseRepository.findById(courseId)
+    public ApiResponse<CreateChapterResponse> createChapter(Long courseId, CreateChapterRequest request) {
+        Course course = courseRepository
+                .findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
         // 1. Convert request to chapter entity
@@ -36,31 +38,35 @@ public class ChapterServiceImpl implements ChapterService {
         chapterRepository.save(chapter);
 
         // 3. Convert chapter entity to response
-        return chapterMapper.toCreateChapterResponse(course, chapter);
+        return new ApiResponse<>("success", "Chapter create successfully",
+                chapterMapper.toCreateChapterResponse(course, chapter));
     }
 
     @Override
-    public List<ChapterDetailResponse> getAllChapterDetails(Long courseId) {
+    public ApiResponse<List<ChapterDetailResponse>> getAllChapterDetails(Long courseId) {
         List<Chapter> chapterList = chapterRepository.findAllById(courseId);
-        return chapterList.stream().map(chapterMapper::toChapterDetailResponse).toList();
+        return new ApiResponse<>("success", "Get All Chapters success", chapterList
+                .stream()
+                .map(chapterMapper::toChapterDetailResponse)
+                .toList());
     }
 
     @Override
-    public ChapterDetailResponse getChapterById(Long chapterId) {
+    public ApiResponse<ChapterDetailResponse> getChapterById(Long chapterId) {
         Chapter chapter = chapterRepository.findChapterById(chapterId);
-        return chapterMapper.toChapterDetailResponse(chapter);
-        }
+        return new ApiResponse<>("success", "Get Chapter By ID", chapterMapper.toChapterDetailResponse(chapter));
+    }
 
     @Override
     public void deleteChapterById(Long chapterId) {
-         boolean res = chapterRepository.deleteChapterById(chapterId);
-         if (!res) {
-             throw new IllegalArgumentException("Chapter not found");
-         }
+        boolean res = chapterRepository.deleteChapterById(chapterId);
+        if (!res) {
+            throw new IllegalArgumentException("Chapter not found");
+        }
     }
 
     @Override
-    public ChapterDetailResponse updateChapterById(Long chapterId, UpdateChapterRequest request) {
+    public ApiResponse<ChapterDetailResponse> updateChapterById(Long chapterId, UpdateChapterRequest request) {
         Chapter chapter = chapterRepository.findChapterById(chapterId);
         if (chapter == null) {
             throw new IllegalArgumentException("Chapter not found");
@@ -71,6 +77,6 @@ public class ChapterServiceImpl implements ChapterService {
         chapter.setUpdatedAt(Instant.now());
 
         chapterRepository.save(chapter);
-        return chapterMapper.toChapterDetailResponse(chapter);
+        return new ApiResponse<>("success", "Update Chapter success", chapterMapper.toChapterDetailResponse(chapter));
     }
 }

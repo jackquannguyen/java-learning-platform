@@ -2,6 +2,7 @@ package com.javabuilder.backendservice.service.impl;
 
 import com.javabuilder.backendservice.dto.request.CreateLessonRequest;
 import com.javabuilder.backendservice.dto.request.UpdateLessonRequest;
+import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.CreateLessonResponse;
 import com.javabuilder.backendservice.dto.response.LessonDetailResponse;
 import com.javabuilder.backendservice.entity.Chapter;
@@ -25,38 +26,48 @@ public class LessonServiceImpl implements LessonService {
     private final LessonMapper lessonMapper;
 
     @Override
-    public CreateLessonResponse createLesson(Long chapterId, CreateLessonRequest request) {
-        Chapter chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
-
+    public ApiResponse<CreateLessonResponse> createLesson(Long chapterId, CreateLessonRequest request) {
+        Chapter chapter = chapterRepository
+                .findById(chapterId)
+                .orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
         Lesson lesson = lessonMapper.toLesson(chapter, request);
-
         lessonRepository.save(lesson);
-
-        return lessonMapper.toCreateLessonResponse(lesson);
+        return new ApiResponse<>("success", "Lesson create success", lessonMapper.toCreateLessonResponse(lesson));
     }
 
     @Override
-    public List<LessonDetailResponse> getAllLessonDetails(Long chapterId) {
-        Chapter chapter = chapterRepository.findById(chapterId).orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
+    public ApiResponse<List<LessonDetailResponse>> getAllLessonDetails(Long chapterId) {
+        Chapter chapter = chapterRepository
+                .findById(chapterId)
+                .orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
         List<Lesson> lessonList = lessonRepository.findAllById(chapterId);
-        return lessonList.stream().map(lessonMapper::toLessonDetailResponse).toList();
+        return new ApiResponse<>("success", "Get All Lessons success", lessonList
+                .stream()
+                .map(lessonMapper::toLessonDetailResponse)
+                .toList());
     }
 
     @Override
-    public LessonDetailResponse getLessonById(Long lessonId) {
-        Lesson lesson =  lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
-        return lessonMapper.toLessonDetailResponse(lesson);
+    public ApiResponse<LessonDetailResponse> getLessonById(Long lessonId) {
+        Lesson lesson = lessonRepository
+                .findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+        return new ApiResponse<>("success", "Get Lesson success", lessonMapper.toLessonDetailResponse(lesson));
     }
 
     @Override
     public void deleteLessonById(Long lessonId) {
-        Lesson deletedLesson = lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+        Lesson deletedLesson = lessonRepository
+                .findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
         lessonRepository.delete(deletedLesson);
     }
 
     @Override
-    public LessonDetailResponse updateLessonById(Long lessonId, UpdateLessonRequest request) {
-        Lesson currentLesson =  lessonRepository.findById(lessonId).orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+    public ApiResponse<LessonDetailResponse> updateLessonById(Long lessonId, UpdateLessonRequest request) {
+        Lesson currentLesson = lessonRepository
+                .findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
 
         currentLesson.setTitle(request.getTitle());
         currentLesson.setVideoUrl(request.getVideoUrl());
@@ -64,6 +75,7 @@ public class LessonServiceImpl implements LessonService {
         currentLesson.setOrderIndex(request.getOrderIndex());
         lessonRepository.save(currentLesson);
 
-        return lessonMapper.toLessonDetailResponse(currentLesson);
+        return new ApiResponse<>("success", "Update Lesson success",
+                lessonMapper.toLessonDetailResponse(currentLesson));
     }
 }
