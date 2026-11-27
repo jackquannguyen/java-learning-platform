@@ -9,6 +9,8 @@ import com.javabuilder.backendservice.dto.response.UserProfileInfo;
 import com.javabuilder.backendservice.entity.Role;
 import com.javabuilder.backendservice.entity.User;
 import com.javabuilder.backendservice.entity.UserHasRole;
+import com.javabuilder.backendservice.exception.AppException;
+import com.javabuilder.backendservice.exception.ErrorCode;
 import com.javabuilder.backendservice.repository.RoleRepository;
 import com.javabuilder.backendservice.repository.UserRepository;
 import com.javabuilder.backendservice.service.UserService;
@@ -34,7 +36,7 @@ public class UserServiceImpl implements UserService {
     public ApiResponse<RegisterUserResponse> registerUser(RegisterUserRequest request) {
         boolean emailExist = userRepository.existsByEmail(request.getEmail());
         if (emailExist) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -50,7 +52,7 @@ public class UserServiceImpl implements UserService {
         //Add Default "USER" Role
         Role role = roleRepository
                 .findByName(RoleName.USER)
-                .orElseThrow(() -> new IllegalStateException("Role not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_FOUND));
         UserHasRole userHasRoles = UserHasRole
                 .builder()
                 .user(user)
@@ -85,13 +87,13 @@ public class UserServiceImpl implements UserService {
                 .getContext()
                 .getAuthentication();
         if (authentication == null) {
-            throw new IllegalStateException("User not authenticated");
+            throw new AppException(ErrorCode.USER_NOT_AUTHENTICATED);
         }
 
         Long userId = Long.valueOf(authentication.getName());
         User user = userRepository
                 .findById(userId)
-                .orElseThrow(() -> new IllegalStateException("User not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return new ApiResponse<>("success", "Get user information success", UserProfileInfo
                 .builder()
                 .id(user.getId())

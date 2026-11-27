@@ -7,6 +7,8 @@ import com.javabuilder.backendservice.dto.response.ChapterDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateChapterResponse;
 import com.javabuilder.backendservice.entity.Chapter;
 import com.javabuilder.backendservice.entity.Course;
+import com.javabuilder.backendservice.exception.AppException;
+import com.javabuilder.backendservice.exception.ErrorCode;
 import com.javabuilder.backendservice.mapper.ChapterMapper;
 import com.javabuilder.backendservice.repository.ChapterRepository;
 import com.javabuilder.backendservice.repository.CourseRepository;
@@ -29,7 +31,7 @@ public class ChapterServiceImpl implements ChapterService {
     public ApiResponse<CreateChapterResponse> createChapter(Long courseId, CreateChapterRequest request) {
         Course course = courseRepository
                 .findById(courseId)
-                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
         // 1. Convert request to chapter entity
         Chapter chapter = chapterMapper.toChapter(course, request);
@@ -61,7 +63,7 @@ public class ChapterServiceImpl implements ChapterService {
     public void deleteChapterById(Long chapterId) {
         boolean res = chapterRepository.deleteChapterById(chapterId);
         if (!res) {
-            throw new IllegalArgumentException("Chapter not found");
+            throw new AppException(ErrorCode.CHAPTER_NOT_FOUND);
         }
     }
 
@@ -69,7 +71,7 @@ public class ChapterServiceImpl implements ChapterService {
     public ApiResponse<ChapterDetailResponse> updateChapterById(Long chapterId, UpdateChapterRequest request) {
         Chapter chapter = chapterRepository.findChapterById(chapterId);
         if (chapter == null) {
-            throw new IllegalArgumentException("Chapter not found");
+            throw new AppException(ErrorCode.CHAPTER_NOT_FOUND);
         }
         chapter.setName(request.getName());
         chapter.setDescription(request.getDescription());

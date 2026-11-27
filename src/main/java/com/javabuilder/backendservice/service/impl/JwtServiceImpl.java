@@ -1,6 +1,8 @@
 package com.javabuilder.backendservice.service.impl;
 
 import com.javabuilder.backendservice.common.TokenStatus;
+import com.javabuilder.backendservice.exception.AppException;
+import com.javabuilder.backendservice.exception.ErrorCode;
 import com.javabuilder.backendservice.service.JwtService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -9,7 +11,6 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -49,7 +50,7 @@ public class JwtServiceImpl implements JwtService {
             JWSSigner signer = new MACSigner(secretKey);
             signedJWT.sign(signer);
         } catch (JOSEException e) {
-            throw new RuntimeException(e);
+            throw new AppException(ErrorCode.TOKEN_GENERATE_FAILED);
         }
 
         return signedJWT.serialize();
@@ -79,7 +80,7 @@ public class JwtServiceImpl implements JwtService {
             JWSSigner signer = new MACSigner(secretKey);
             signedJWT.sign(signer);
         } catch (JOSEException e) {
-            throw new RuntimeException(e);
+            throw new AppException(ErrorCode.TOKEN_GENERATE_FAILED);
         }
 
         return signedJWT.serialize();
