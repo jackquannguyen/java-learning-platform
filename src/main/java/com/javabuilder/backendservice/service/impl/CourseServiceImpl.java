@@ -5,6 +5,8 @@ import com.javabuilder.backendservice.dto.request.UpdateCourseRequest;
 import com.javabuilder.backendservice.dto.response.ApiResponse;
 import com.javabuilder.backendservice.dto.response.CourseDetailResponse;
 import com.javabuilder.backendservice.dto.response.CreateCourseResponse;
+import com.javabuilder.backendservice.exception.AppException;
+import com.javabuilder.backendservice.exception.ErrorCode;
 import com.javabuilder.backendservice.mapper.CourseMapper;
 import com.javabuilder.backendservice.repository.projection.CourseSummary;
 import com.javabuilder.backendservice.entity.Course;
@@ -40,7 +42,7 @@ public class CourseServiceImpl implements CourseService {
         return new ApiResponse<>("success", "Find Course success", courseRepository
                 .findById(id)
                 .map(courseMapper::toCourseDetailResponse)
-                .orElseThrow(() -> new RuntimeException("Course not found")));
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND)));
     }
 
     @Override
@@ -61,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
     public ApiResponse<CourseDetailResponse> updateCourseById(Long id, UpdateCourseRequest request) {
         Course course = courseRepository
                 .findById(id)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.COURSE_NOT_FOUND));
 
         if (request.getName() != null) {
             course.setName(request.getName());

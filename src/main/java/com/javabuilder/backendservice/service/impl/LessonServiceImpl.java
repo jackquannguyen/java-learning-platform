@@ -7,6 +7,8 @@ import com.javabuilder.backendservice.dto.response.CreateLessonResponse;
 import com.javabuilder.backendservice.dto.response.LessonDetailResponse;
 import com.javabuilder.backendservice.entity.Chapter;
 import com.javabuilder.backendservice.entity.Lesson;
+import com.javabuilder.backendservice.exception.AppException;
+import com.javabuilder.backendservice.exception.ErrorCode;
 import com.javabuilder.backendservice.mapper.LessonMapper;
 import com.javabuilder.backendservice.repository.ChapterRepository;
 import com.javabuilder.backendservice.repository.LessonRepository;
@@ -29,7 +31,7 @@ public class LessonServiceImpl implements LessonService {
     public ApiResponse<CreateLessonResponse> createLesson(Long chapterId, CreateLessonRequest request) {
         Chapter chapter = chapterRepository
                 .findById(chapterId)
-                .orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
         Lesson lesson = lessonMapper.toLesson(chapter, request);
         lessonRepository.save(lesson);
         return new ApiResponse<>("success", "Lesson create success", lessonMapper.toCreateLessonResponse(lesson));
@@ -39,7 +41,7 @@ public class LessonServiceImpl implements LessonService {
     public ApiResponse<List<LessonDetailResponse>> getAllLessonDetails(Long chapterId) {
         Chapter chapter = chapterRepository
                 .findById(chapterId)
-                .orElseThrow(() -> new IllegalArgumentException("Chapter not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
         List<Lesson> lessonList = lessonRepository.findAllById(chapterId);
         return new ApiResponse<>("success", "Get All Lessons success", lessonList
                 .stream()
@@ -51,7 +53,7 @@ public class LessonServiceImpl implements LessonService {
     public ApiResponse<LessonDetailResponse> getLessonById(Long lessonId) {
         Lesson lesson = lessonRepository
                 .findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
         return new ApiResponse<>("success", "Get Lesson success", lessonMapper.toLessonDetailResponse(lesson));
     }
 
@@ -59,7 +61,7 @@ public class LessonServiceImpl implements LessonService {
     public void deleteLessonById(Long lessonId) {
         Lesson deletedLesson = lessonRepository
                 .findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
         lessonRepository.delete(deletedLesson);
     }
 
@@ -67,7 +69,7 @@ public class LessonServiceImpl implements LessonService {
     public ApiResponse<LessonDetailResponse> updateLessonById(Long lessonId, UpdateLessonRequest request) {
         Lesson currentLesson = lessonRepository
                 .findById(lessonId)
-                .orElseThrow(() -> new IllegalArgumentException("Lesson not found!"));
+                .orElseThrow(() -> new AppException(ErrorCode.LESSON_NOT_FOUND));
 
         currentLesson.setTitle(request.getTitle());
         currentLesson.setVideoUrl(request.getVideoUrl());
